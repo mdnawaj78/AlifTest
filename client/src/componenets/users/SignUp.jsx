@@ -1,76 +1,194 @@
-import React from "react";
-import { Link } from 'react-router-dom';
-
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { signUpUser } from "../../redux/features/authslice";
+import "../../styles/components.css"; // Import reusable styles
+import "../../styles/global.css"; // Import global styles (if needed)
+import "../../styles/variables.css"; // Import variables (if needed)
 
 const Signup = () => {
-  return (
-    <div className="relative w-full h-screen bg-gray-100  flex flex-col justify-center items-center">
-                    {/* flex flex-col items-center justify-center min-h-screen p-4 bg-gray-100 */}
-      {/* Signup form */}
-      <form className="bg-white bg-opacity-90 p-10 rounded-lg shadow-lg max-w-md w-full space-y-6">
-        <h2 className="text-3xl font-bold text-center text-h2">Sign Up</h2>
+  const [formData, setFormData] = useState({
+    username: "",
+    email: "",
+    phone: "",
+    password: "",
+  });
 
-        <div>
-          <label
-            htmlFor="email"
-            className="block text-sm font-medium text-gray-700"
-          >
+  const [errors, setErrors] = useState({});
+  const [errorMessage, setErrorMessage] = useState(""); // State for general error messages
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const { success, loading, error } = useSelector((state) => state.auth); // Track success, loading, and error states
+
+  // UseEffect to handle navigation on successful signup
+  useEffect(() => {
+    if (success) {
+      navigate("/signin");
+    }
+  }, [success, navigate]);
+
+  // UseEffect to set error message from the Redux state
+  useEffect(() => {
+    if (error) {
+      // Check if the error is an object with a message property
+      if (error.message) {
+        setErrorMessage(error.message); // Extract message from error object
+      } else {
+        setErrorMessage("Something went wrong!"); // Fallback error message
+      }
+    }
+  }, [error]);
+
+  const validateForm = () => {
+    let validationErrors = {};
+
+    // Username validation
+    if (!formData.username) {
+      validationErrors.username = "Username is required";
+    } else if (formData.username.length < 3) {
+      validationErrors.username = "Username must be at least 3 characters";
+    }
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!formData.email) {
+      validationErrors.email = "Email is required";
+    } else if (!emailRegex.test(formData.email)) {
+      validationErrors.email = "Invalid email format";
+    }
+
+    // Phone validation
+    const phoneRegex = /^[0-9]{10}$/;
+    if (!formData.phone) {
+      validationErrors.phone = "Phone number is required";
+    } else if (!phoneRegex.test(formData.phone)) {
+      validationErrors.phone = "Phone number must be 10 digits";
+    }
+
+    // Password validation
+    const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!formData.password) {
+      validationErrors.password = "Password is required";
+    } else if (!passwordRegex.test(formData.password)) {
+      validationErrors.password =
+        "Password must be at least 8 characters long, with at least one uppercase letter, one number, and one special character";
+    }
+
+    return validationErrors;
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const validationErrors = validateForm();
+    if (Object.keys(validationErrors).length === 0) {
+      setErrorMessage(""); // Clear previous error messages
+      dispatch(signUpUser(formData));
+    } else {
+      setErrors(validationErrors);
+    }
+  };
+
+  return (
+    <div className="container">
+      <form onSubmit={handleSubmit} className="form">
+        <h1 className="title">Sign Up</h1>
+
+        {/* Username Input */}
+        <div className="input-group">
+          <label className="label" htmlFor="username">
+            Username
+          </label>
+          <input
+            type="text"
+            id="username"
+            name="username"
+            value={formData.username}
+            onChange={handleChange}
+            className="input"
+            placeholder="Enter your username"
+            required
+          />
+          {errors.username && <p className="error-text">{errors.username}</p>}
+        </div>
+
+        {/* Email Input */}
+        <div className="input-group">
+          <label className="label" htmlFor="email">
             Email
           </label>
           <input
             type="email"
             id="email"
             name="email"
-            className="mt-1 block w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            value={formData.email}
+            onChange={handleChange}
+            className="input"
             placeholder="Enter your email"
             required
           />
+          {errors.email && <p className="error-text">{errors.email}</p>}
         </div>
 
-        <div>
-          <label
-            htmlFor="phone"
-            className="block text-sm font-medium text-gray-700"
-          >
+        {/* Phone Input */}
+        <div className="input-group">
+          <label className="label" htmlFor="phone">
             Phone
           </label>
           <input
             type="tel"
             id="phone"
             name="phone"
-            className="mt-1 block w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            value={formData.phone}
+            onChange={handleChange}
+            className="input"
             placeholder="Enter your phone number"
             required
           />
+          {errors.phone && <p className="error-text">{errors.phone}</p>}
         </div>
 
-        <div>
-          <label
-            htmlFor="password"
-            className="block text-sm font-medium text-gray-700"
-          >
+        {/* Password Input */}
+        <div className="input-group">
+          <label className="label" htmlFor="password">
             Password
           </label>
           <input
             type="password"
             id="password"
             name="password"
-            className="mt-1 block w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            value={formData.password}
+            onChange={handleChange}
+            className="input"
             placeholder="Enter your password"
             required
           />
+          {errors.password && <p className="error-text">{errors.password}</p>}
         </div>
 
-        <button
-          type="submit"
-          className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-buttonText bg-buttonBackground hover:bg-buttonBackgroundHover hover:text-buttonTextHover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-        >
-          Sign Up
+        <button type="submit" className="button" disabled={loading}>
+          {loading ? "Signing Up..." : "Sign Up"}
         </button>
+
+        {/* Display error message at the bottom of the form */}
+        {errorMessage && <p className="error-text mt-4">{errorMessage}</p>}
       </form>
       <p className="mt-4 text-center">
-        Have an account? 
-        <Link to="/signin" className="text-text-500 ml-1 font-semibold hover:underline">Sign In</Link>
+        Have an account?
+        <Link
+          to="/signin"
+          className="text-text-500 ml-1 font-semibold hover:underline"
+        >
+          Sign In
+        </Link>
       </p>
     </div>
   );

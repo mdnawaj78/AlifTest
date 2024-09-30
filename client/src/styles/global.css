@@ -1,0 +1,50 @@
+/* Global Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-family);
+    color: var(--text-color);
+}
+
+h1 {
+    font-size: var(--heading-font-size);
+    font-weight: bold;
+    text-align: center;
+}
+
+p, span, label {
+    font-family: var(--font-family);
+    color: var(--muted-text-color);
+    line-height: 1.5;
+}
+
+/* Links */
+a {
+    color: var(--secondary-color);
+    text-decoration: none;
+    cursor: pointer;
+}
+a:hover {
+    text-decoration: underline;
+}
+
+/* Hover State for Text */
+.text-hover {
+    cursor: pointer;
+    color: var(--secondary-color);
+}
+.text-hover:hover {
+    color: var(--primary-color);
+    text-decoration: underline;
+}
+
+.title {
+    margin-bottom: 1.5rem; /* Adjust this value for desired spacing */
+    font-size: 2rem; /* Optional: set a font size */
+    text-align: center; /* Center the title */
+}

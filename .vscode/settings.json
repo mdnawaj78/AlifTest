@@ -1,7 +1,12 @@
 {
     "cSpell.words": [
+        "authslice",
+        "myapp",
+        "persistor",
+        "reduxjs",
         "Signout",
         "signup",
+        "tailwindcss",
         "todos"
     ]
 }
