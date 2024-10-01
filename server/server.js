@@ -16,6 +16,8 @@ dotenv.config();
 // Initialize the Express app
 const app = express();
 
+
+
 // Middleware setup
 app.use(cors()); // Enable CORS
 app.use(express.json()); // Middleware to parse JSON requests
