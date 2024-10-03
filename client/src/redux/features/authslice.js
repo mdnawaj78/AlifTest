@@ -68,7 +68,6 @@ const authSlice = createSlice({
         state.success = false;
       })
       .addCase(signUpUser.fulfilled, (state, action) => {
-        state.user = action.payload; // Store user data when signed up
         state.loading = false;
         state.success = true; // Set success to true on signup success
         state.error = null;
